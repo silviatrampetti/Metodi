@@ -1,2 +1,2 @@
 # Metodi
-print("Hello world")
+Hello world
