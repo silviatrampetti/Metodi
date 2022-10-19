@@ -1,1 +1,2 @@
 # Metodi
+print("Hello world")
