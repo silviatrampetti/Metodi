@@ -1,0 +1,20 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy import integrate
+
+df = pd.read_csv('vel_vs_time.csv')
+
+plt.plot(df['t'],df['v'])
+plt.xlabel('tempo')
+plt.ylabel('velocità')
+plt.show()
+
+s= integrate.simpson(df['v'],df['t'])
+print('s=',s)
+
+array_vel = df['v']
+array_t = df['t']
+array_s= []
+for i in range(1,199):
+    print ('hello')
