@@ -1,0 +1,51 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy import optimize
+
+df = pd.read_csv("fit_data.csv")
+print(df)
+
+y_err= np.sqrt(df['y'])
+
+plt.plot(df['x'],df['y'])
+plt.xlabel('x')
+plt.ylabel('y')
+plt.xscale("log")
+plt.yscale('log')
+plt.show()
+
+"""
+#funzione lognormale
+def lognorm(x,mu,sigma):
+    num = np.exp((np.log(x)-mu)**2/(2*sigma**2))
+    den = x*np.sqrt(2*np.pi)*sigma
+    return num/den
+
+p, cov = optimize.curve_fit(lognorm, df['x'],df['y'],sigma = y_err)
+yfit = lognorm(df['x'],p[0],p[1])
+
+"""
+
+def norm(x,mu,sigma):
+    z = np.log(x)
+    p = (np.pi*sigma)*np.exp(-0.5*((z-mu)/sigma)**2)
+    return p
+
+p, cov = optimize.curve_fit(norm, df['x'],      df['y'],sigma = y_err)
+yfit = norm(df['x'],p[0],p[1])
+
+"""
+#senza errori
+plt.plot(df['x'],df['y'])
+plt.plot(df['x'],yfit)
+plt.xscale('log')
+plt.yscale('log')
+plt.show()
+"""
+
+plt.errorbar(df['x'],df['y'],yerr = y_err, fmt='o')
+plt.errorbar(df['x'],yfit)
+plt.xscale('log')
+plt.yscale('log')
+plt.show()
