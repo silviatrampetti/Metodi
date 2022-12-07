@@ -1,0 +1,91 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import sys,os
+sys.path.append('../esercitazione9')
+import reco
+
+#PASSO1
+
+df0 = pd.read_csv('hit_times_M0.csv')
+df1 = pd.read_csv('hit_times_M1.csv')
+df2 = pd.read_csv('hit_times_M2.csv')
+df3 = pd.read_csv('hit_times_M3.csv')
+
+plt.hist(df0['hit_time'], bins = 50, color = 'orange', ec='red')
+plt.title('Tempi degli hit')
+plt.show()
+
+differenze = np.diff(df0['hit_time'])
+mask = differenze > 0
+diff_log = np.log10(differenze[mask])
+
+plt.hist(diff_log, bins =50, color = 'lightgreen', ec = 'green')
+plt.title('Differenze tra i tempi')
+plt.show()
+
+"""
+Primo picco: appartengono allo stesso evento
+Secondo picco: appartengono ad eventi diversi
+"""
+
+#PASSO3
+array_hit0 = np.empty(0)
+for i in range(len(df0['hit_time'])):
+    h = reco.Hit(df0['mod_id'][i], df0['det_id'][i], df0['hit_time'][i])
+    array_hit0 = np.append(array_hit0, h)
+
+array_hit1 = np.empty(0)
+for i in range(len(df1['hit_time'])):
+    h = reco.Hit(df1['mod_id'][i], df1['det_id'][i], df1['hit_time'][i])
+    array_hit1 = np.append(array_hit1, h)
+
+array_hit2 = np.empty(0)
+for i in range(len(df2['hit_time'])):
+    h = reco.Hit(df2['mod_id'][i], df2['det_id'][i], df2['hit_time'][i])
+    array_hit2 = np.append(array_hit2, h)
+
+array_hit3 = np.empty(0)
+for i in range(len(df3['hit_time'])):
+    h = reco.Hit(df3['mod_id'][i], df3['det_id'][i], df3['hit_time'][i])
+    array_hit3 = np.append(array_hit3, h)
+
+array_hit01 = np.append(array_hit0, array_hit1)
+array_hit012 = np.append(array_hit01, array_hit2)
+array_hit0123 = np.append(array_hit012, array_hit3)
+array_hit_tot = np.sort(array_hit0123)
+
+array_dt = np.empty(0)
+for i in range(len(array_hit_tot)-1):
+    deltat = array_hit_tot[i+1].time-array_hit_tot[i].time
+    if (deltat >0):
+        array_dt = np.append(array_dt, deltat)
+array_dt_log = np.log10(array_dt)
+plt.hist(array_dt_log, bins =50, color = 'lightblue', ec = 'blue')
+plt.title('Differenze tempi array di hit ordinato')
+plt.show()
+
+"""
+se deltat < 2 appartengono allo stesso evento,
+altrimenti a eventi distinti
+"""
+
+#PASSO4
+start = array_hit_tot[0].time
+events = np.empty(0)
+array_event = np.empty(0)
+for i in range(len(array_hit_tot)):
+    if (array_hit_tot[i].time-start <= 2):
+         array_event = np.append(array_event, array_hit_tot[i])
+    else:
+        event = reco.Event(array_event)
+        events = np.append(events, event)
+        array_event = np.array([array_hit_tot[i]])
+    start = array_hit_tot[i].time
+
+
+
+    
+
+        
+    

@@ -1,0 +1,8 @@
+class Hit:
+    
+    def __init__(self, m, s):
+        id_modulo = m
+        id_sensore = s
+        time = 
+        
+    def 
